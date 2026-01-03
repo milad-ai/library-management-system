@@ -110,7 +110,7 @@ ADMIN_PASSWORD=admin123
 python app.py
 
 # یا با gunicorn برای production
-gunicorn app:app
+gunicorn --bind 0.0.0.0:5000 wsgi:app
 ```
 
 ### 6. دسترسی به برنامه
