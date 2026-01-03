@@ -11,6 +11,7 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
 
+
 # ایمپورت کلاس دیتابیس و Auth
 from database import db
 from auth import AdminUser, login_manager
