@@ -126,6 +126,7 @@ http://localhost:5000
 ```
 library-management-system/
 ├── app.py                 # فایل اصلی برنامه Flask
+├── wsgi.py                #  gunicorn برای production
 ├── database.py            # کلاس مدیریت پایگاه داده
 ├── auth.py                # مدیریت احراز هویت
 ├── requirements.txt       # وابستگی‌های پایتون
