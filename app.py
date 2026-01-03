@@ -4,7 +4,6 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-
 # بارگذاری متغیرهای محیطی
 load_dotenv()
 
