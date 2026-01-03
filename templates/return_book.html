@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}پس گرفتن کتاب{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-arrow-down-circle"></i> پس گرفتن کتاب
+                </h4>
+            </div>
+            
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('return_book') }}">
+                    <div class="mb-4">
+                        <label for="book_id" class="form-label">انتخاب کتاب *</label>
+                        <select class="form-select" id="book_id" name="book_id" required>
+                            <option value="" selected disabled>یک کتاب انتخاب کنید</option>
+                            {% for book in book_choices %}
+                            <option value="{{ book[0] }}">{{ book[1] }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if not book_choices %}
+                        <div class="alert alert-warning mt-2">
+                            <i class="bi bi-check-circle"></i>
+                            هیچ کتابی برای بازگرداندن وجود ندارد!
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="condition" class="form-label">وضعیت کتاب</label>
+                        <select class="form-select" id="condition" name="condition">
+                            <option value="excellent">عالی</option>
+                            <option value="good" selected>خوب</option>
+                            <option value="fair">متوسط</option>
+                            <option value="damaged">آسیب‌دیده</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="return_notes" class="form-label">یادداشت بازگشت (اختیاری)</label>
+                        <textarea class="form-control" id="return_notes" name="return_notes" 
+                                  rows="3" placeholder="یادداشت درباره وضعیت کتاب و..."></textarea>
+                    </div>
+                    
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>توجه:</strong> 
+                        پس از ثبت بازگشت، موجودی کتاب افزایش می‌یابد و تاریخ بازگشت ثبت می‌شود.
+                        در صورت آسیب‌دیدگی کتاب، یادداشت مربوطه را ثبت کنید.
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> انصراف
+                        </a>
+                        <button type="submit" class="btn btn-danger" 
+                                {% if not book_choices %}disabled{% endif %}>
+                            <i class="bi bi-check-circle"></i> ثبت بازگشت
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- لیست کتاب‌های امانت‌رفته -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="bi bi-clock-history"></i> کتاب‌های در حال امانت
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>کتاب</th>
+                                <th>عضو</th>
+                                <th>تاریخ امانت</th>
+                                <th>موعد بازگشت</th>
+                                <th>وضعیت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in borrowed_books %}
+                            <tr>
+                                <td>{{ book[2] }}</td>
+                                <td>{{ book[5] }}</td>
+                                <td>
+                                    <span class="persian-date" data-date="{{ book[6] }}"></span>
+                                </td>
+                                <td>
+                                    <span class="persian-date" data-date="{{ book[7] }}"></span>
+                                </td>
+                                <td>
+                                    {% if book[8] == 'معوقه' %}
+                                    <span class="badge bg-danger">معوقه</span>
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark">در امانت</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <i class="bi bi-check-circle display-1 text-success mb-3"></i>
+                                    <p class="text-muted">هیچ کتابی در حال امانت نیست!</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}مدیریت کتاب‌ها{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>
+            <i class="bi bi-book"></i> مدیریت کتاب‌ها
+        </h2>
+        <p class="text-muted">لیست تمام کتاب‌های موجود در کتابخانه</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> افزودن کتاب جدید
+        </a>
+        <button class="btn btn-outline-secondary print-btn">
+            <i class="bi bi-printer"></i> چاپ
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">لیست کتاب‌ها</h5>
+        <div class="input-group w-25">
+            <input type="text" class="form-control" placeholder="جستجو..." id="search-input">
+            <button class="btn btn-outline-secondary" type="button">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        {% if books %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>عنوان</th>
+                        <th>نویسنده</th>
+                        <th>سال انتشار</th>
+                        <th>موجودی</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td class="persian-digits">{{ loop.index }}</td>
+                        <td>
+                            <strong>{{ book[1] }}</strong>
+                            {% if book[3] %}
+                            <br>
+                            <small class="text-muted">شابک: {{ book[3] }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ book[2] }}</td>
+                        <td class="persian-digits">
+                            {% if book[4] %}{{ book[4] }}{% else %}---{% endif %}
+                        </td>
+                        <td>
+                            <span class="persian-digits">{{ book[6] }}</span> / 
+                            <span class="persian-digits">{{ book[5] }}</span>
+                        </td>
+                        <td>
+                            {% if book[6] > 0 %}
+                            <span class="badge bg-success">موجود</span>
+                            {% else %}
+                            <span class="badge bg-danger">امانت</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-info" data-bs-toggle="tooltip" 
+                                        title="مشاهده جزئیات">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <a href="#edit-modal" class="btn btn-outline-warning" 
+                                   data-bs-toggle="modal" data-bs-target="#editBookModal{{ book[0] }}"
+                                   data-bs-tooltip="tooltip" title="ویرایش">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{{ url_for('delete_book', book_id=book[0]) }}" 
+                                   class="btn btn-outline-danger confirm-delete"
+                                   data-bs-tooltip="tooltip" title="حذف">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                            
+                            <!-- Edit Modal -->
+                            <div class="modal fade" id="editBookModal{{ book[0] }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">ویرایش کتاب</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="/books/{{ book[0] }}/edit">
+                                                <div class="mb-3">
+                                                    <label class="form-label">عنوان</label>
+                                                    <input type="text" class="form-control" 
+                                                           value="{{ book[1] }}" name="title" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">نویسنده</label>
+                                                    <input type="text" class="form-control" 
+                                                           value="{{ book[2] }}" name="author" required>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">سال انتشار</label>
+                                                        <input type="number" class="form-control" 
+                                                               value="{{ book[4] or '' }}" name="publication_year">
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">تعداد کل</label>
+                                                        <input type="number" class="form-control" 
+                                                               value="{{ book[5] }}" name="total_copies" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" 
+                                                            data-bs-dismiss="modal">انصراف</button>
+                                                    <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">قبلی</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">بعدی</a>
+                </li>
+            </ul>
+        </nav>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-book display-1 text-muted mb-3"></i>
+            <h4>هیچ کتابی یافت نشد!</h4>
+            <p class="text-muted mb-4">هنوز کتابی به کتابخانه اضافه نشده است.</p>
+            <a href="{{ url_for('add_book') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> افزودن اولین کتاب
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="card-footer text-muted">
+        <div class="row">
+            <div class="col-md-6">
+                <i class="bi bi-info-circle"></i>
+                مجموع: <span class="persian-digits">{{ books|length }}</span> کتاب
+            </div>
+            <div class="col-md-6 text-end">
+                <i class="bi bi-clock"></i>
+                آخرین به‌روزرسانی: اکنون
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-tooltip="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Live search
+    document.getElementById('search-input').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

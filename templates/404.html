@@ -1,0 +1,33 @@
+{% extends base.html %}
+
+{% block title %}صفحه یافت نشد{% endblock %}
+
+{% block content %}
+div class=row justify-content-center
+    div class=col-md-6
+        div class=text-center py-5
+            div class=error-code display-1 text-danger mb-4۴۰۴div
+            h1 class=mb-3صفحه مورد نظر یافت نشد!h1
+            p class=lead mb-4متأسفیم، صفحه‌ای که به دنبال آن هستید وجود ندارد یا حذف شده است.p
+            
+            div class=d-flex justify-content-center gap-3
+                a href={{ url_for('dashboard') }} class=btn btn-primary btn-lg
+                    i class=bi bi-house-doori بازگشت به داشبورد
+                a
+                a href={{ url_for('books') }} class=btn btn-outline-primary btn-lg
+                    i class=bi bi-booki مشاهده کتاب‌ها
+                a
+            div
+            
+            div class=mt-5
+                h5راه‌های دیگرh5
+                ul class=list-unstyled
+                    lia href={{ url_for('members') }}مشاهده اعضاali
+                    lia href={{ url_for('search_books') }}جستجوی کتابali
+                    lia href={{ url_for('borrowed_books') }}مشاهده امانت‌هاali
+                ul
+            div
+        div
+    div
+div
+{% endblock %}

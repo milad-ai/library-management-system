@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}کتاب‌های امانت‌رفته{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>
+            <i class="bi bi-clock-history"></i> کتاب‌های امانت‌رفته
+        </h2>
+        <p class="text-muted">لیست تمام کتاب‌های در حال امانت و وضعیت آن‌ها</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('return_book') }}" class="btn btn-danger">
+            <i class="bi bi-arrow-down-circle"></i> پس گرفتن کتاب
+        </a>
+        <button class="btn btn-outline-secondary print-btn">
+            <i class="bi bi-printer"></i> چاپ
+        </button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h6 class="card-title">کل امانت‌ها</h6>
+                <h2 class="mb-0">{{ borrowed_list|length }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h6 class="card-title">در حال امانت</h6>
+                {% set borrowed_count = 0 %}
+                {% for borrow in borrowed_list %}
+                    {% if borrow[8] == 'در امانت' %}
+                        {% set borrowed_count = borrowed_count + 1 %}
+                    {% endif %}
+                {% endfor %}
+                <h2 class="mb-0">{{ borrowed_count }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h6 class="card-title">معوقه</h6>
+                {% set overdue_count = 0 %}
+                {% for borrow in borrowed_list %}
+                    {% if borrow[8] == 'معوقه' %}
+                        {% set overdue_count = overdue_count + 1 %}
+                    {% endif %}
+                {% endfor %}
+                <h2 class="mb-0">{{ overdue_count }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h6 class="card-title">سر وقت</h6>
+                {% set on_time_count = 0 %}
+                {% for borrow in borrowed_list %}
+                    {% if borrow[8] == 'در امانت' %}
+                        {% set on_time_count = on_time_count + 1 %}
+                    {% endif %}
+                {% endfor %}
+                <h2 class="mb-0">{{ on_time_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">لیست امانت‌ها</h5>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary btn-sm active" data-filter="all">همه</button>
+            <button class="btn btn-outline-warning btn-sm" data-filter="borrowed">در امانت</button>
+            <button class="btn btn-outline-danger btn-sm" data-filter="overdue">معوقه</button>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        {% if borrowed_list %}
+        <div class="table-responsive">
+            <table class="table table-hover" id="borrowed-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>کتاب</th>
+                        <th>عضو</th>
+                        <th>تاریخ امانت</th>
+                        <th>موعد بازگشت</th>
+                        <th>روز باقی‌مانده</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for borrow in borrowed_list %}
+                    <tr class="borrow-row" data-status="{{ 'overdue' if borrow[8] == 'معوقه' else 'borrowed' }}">
+                        <td class="persian-digits">{{ loop.index }}</td>
+                        <td>
+                            <strong>{{ borrow[2] }}</strong>
+                            <br>
+                            <small class="text-muted">{{ borrow[3] }}</small>
+                        </td>
+                        <td>
+                            {{ borrow[5] }}
+                            <br>
+                            <small class="text-muted">کد: {{ borrow[4] }}</small>
+                        </td>
+                        <td>
+                            <span class="persian-date" data-date="{{ borrow[6] }}"></span>
+                        </td>
+                        <td>
+                            <span class="persian-date" data-date="{{ borrow[7] }}"></span>
+                        </td>
+                        <td>
+                            {% if borrow[8] == 'معوقه' %}
+                                <span class="badge bg-danger">معوقه</span>
+                            {% else %}
+                                {% set days_left = (borrow[7].date() - now.date()).days %}
+                                {% if days_left > 0 %}
+                                <span class="badge bg-success">{{ days_left }} روز</span>
+                                {% elif days_left == 0 %}
+                                <span class="badge bg-warning text-dark">امروز</span>
+                                {% else %}
+                                <span class="badge bg-danger">{{ -days_left }} روز تأخیر</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if borrow[8] == 'معوقه' %}
+                            <span class="badge bg-danger">معوقه</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark">در امانت</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('return_book') }}?book_id={{ borrow[1] }}" 
+                                   class="btn btn-outline-success" data-bs-tooltip="tooltip" title="بازگرداندن">
+                                    <i class="bi bi-arrow-down-circle"></i>
+                                </a>
+                                <button class="btn btn-outline-info" data-bs-toggle="modal"
+                                        data-bs-target="#extendModal{{ borrow[0] }}"
+                                        data-bs-tooltip="tooltip" title="تمدید">
+                                    <i class="bi bi-calendar-plus"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Extend Modal -->
+                            <div class="modal fade" id="extendModal{{ borrow[0] }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">تمدید امانت</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="/borrowings/{{ borrow[0] }}/extend">
+                                                <div class="mb-3">
+                                                    <label class="form-label">کتاب: {{ borrow[2] }}</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">عضو: {{ borrow[5] }}</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">تمدید به مدت (روز)</label>
+                                                    <input type="number" class="form-control" name="extra_days" 
+                                                           value="7" min="1" max="30">
+                                                </div>
+                                                <div class="alert alert-info">
+                                                    <i class="bi bi-info-circle"></i>
+                                                    حداکثر مدت تمدید: ۳۰ روز
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" 
+                                                            data-bs-dismiss="modal">انصراف</button>
+                                                    <button type="submit" class="btn btn-primary">تمدید</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- آمار -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>میانگین مدت امانت</h6>
+                        <h3>۱۴ روز</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>پرامانت‌گیرترین کتاب</h6>
+                        {% if borrowed_list %}
+                            <h5>{{ borrowed_list[0][2] }}</h5>
+                            <small class="text-muted">کتاب منتخب</small>
+                        {% else %}
+                            <h5>---</h5>
+                            <small class="text-muted">اطلاعاتی موجود نیست</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>پرامانت‌گیرترین عضو</h6>
+                        {% if borrowed_list %}
+                            <h5>{{ borrowed_list[0][5] }}</h5>
+                            <small class="text-muted">عضو منتخب</small>
+                        {% else %}
+                            <h5>---</h5>
+                            <small class="text-muted">اطلاعاتی موجود نیست</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-check-circle display-1 text-success mb-3"></i>
+            <h4>هیچ کتابی در حال امانت نیست!</h4>
+            <p class="text-muted mb-4">همه کتاب‌ها در کتابخانه موجود هستند.</p>
+            <a href="{{ url_for('borrow_book') }}" class="btn btn-primary">
+                <i class="bi bi-arrow-up-circle"></i> امانت دادن کتاب
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="card-footer text-muted">
+        <div class="row">
+            <div class="col-md-6">
+                <i class="bi bi-info-circle"></i>
+                آمار به‌روز: {{ now.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+            <div class="col-md-6 text-end">
+                <i class="bi bi-clock-history"></i>
+                آخرین به‌روزرسانی: لحظاتی پیش
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter borrowed books
+    document.querySelectorAll('[data-filter]').forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Update active button
+            document.querySelectorAll('[data-filter]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // Filter rows
+            const rows = document.querySelectorAll('.borrow-row');
+            rows.forEach(row => {
+                if (filter === 'all') {
+                    row.style.display = '';
+                } else if (row.getAttribute('data-status') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-tooltip="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+{% endblock %}

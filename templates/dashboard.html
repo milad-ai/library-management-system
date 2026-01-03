@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}داشبورد{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">
+                <i class="bi bi-speedometer2"></i> داشبورد مدیریت
+            </h2>
+            <span class="text-muted">
+                <i class="bi bi-calendar3"></i>
+                <span id="current-date"></span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- آمار کلی -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card border-primary h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">کل کتاب‌ها</h6>
+                        <h2 class="stat-total-books mb-0">{{ stats.total_books }}</h2>
+                        <small class="text-muted">کتاب در کتابخانه</small>
+                    </div>
+                    <div class="bg-primary rounded-circle p-3">
+                        <i class="bi bi-book display-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card border-success h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">اعضای فعال</h6>
+                        <h2 class="stat-total-members mb-0">{{ stats.total_members }}</h2>
+                        <small class="text-muted">عضو فعال</small>
+                    </div>
+                    <div class="bg-success rounded-circle p-3">
+                        <i class="bi bi-people display-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card border-warning h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">کتاب‌های امانت‌رفته</h6>
+                        <h2 class="stat-total-borrowed mb-0">{{ stats.total_borrowed }}</h2>
+                        <small class="text-muted">در دست امانت</small>
+                    </div>
+                    <div class="bg-warning rounded-circle p-3">
+                        <i class="bi bi-clock-history display-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card border-danger h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">کتاب‌های معوقه</h6>
+                        <h2 class="stat-overdue mb-0">{{ stats.overdue_books }}</h2>
+                        <small class="text-muted">تأخیر در بازگشت</small>
+                    </div>
+                    <div class="bg-danger rounded-circle p-3">
+                        <i class="bi bi-exclamation-triangle display-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- عملیات سریع -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning-charge"></i> عملیات سریع
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('add_book') }}" class="btn btn-outline-primary btn-lg w-100 h-100">
+                            <i class="bi bi-plus-circle display-6 d-block mb-2"></i>
+                            افزودن کتاب جدید
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('add_member') }}" class="btn btn-outline-success btn-lg w-100 h-100">
+                            <i class="bi bi-person-plus display-6 d-block mb-2"></i>
+                            افزودن عضو جدید
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('borrow_book') }}" class="btn btn-outline-warning btn-lg w-100 h-100">
+                            <i class="bi bi-arrow-up-circle display-6 d-block mb-2"></i>
+                            امانت دادن کتاب
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('return_book') }}" class="btn btn-outline-danger btn-lg w-100 h-100">
+                            <i class="bi bi-arrow-down-circle display-6 d-block mb-2"></i>
+                            پس گرفتن کتاب
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- کتاب‌های معوقه -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> کتاب‌های معوقه
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if stats.overdue_list %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>عنوان کتاب</th>
+                                <th>عضو</th>
+                                <th>موعد بازگشت</th>
+                                <th>روز تأخیر</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in stats.overdue_list %}
+                            <tr>
+                                <td>{{ book[0] }}</td>
+                                <td>{{ book[1] }}</td>
+                                <td>
+                                    <span class="badge bg-danger">
+                                        {{ book[2].strftime('%Y-%m-%d') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">
+                                        {{ ((now - book[2]).days) }} روز
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-check-circle display-1 text-success mb-3"></i>
+                    <h4>هیچ کتاب معوقه‌ای وجود ندارد!</h4>
+                    <p class="text-muted">همه کتاب‌ها سر وقت بازگردانده شده‌اند.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- آخرین فعالیت‌ها -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-activity"></i> آخرین فعالیت‌ها
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for activity in recent_activities %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ activity.title }}</h6>
+                            <small class="text-muted">{{ activity.time }}</small>
+                        </div>
+                        <p class="mb-1 small">{{ activity.description }}</p>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-clock-history display-1 text-muted mb-3"></i>
+                        <p class="text-muted">فعلاً فعالیتی ثبت نشده است.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set current date
+    const now = new Date();
+    const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long',
+        calendar: 'persian'
+    };
+    document.getElementById('current-date').textContent = 
+        new Intl.DateTimeFormat('fa-IR', options).format(now);
+    
+    // Auto-refresh stats every 30 seconds
+    setInterval(function() {
+        fetch('/api/stats')
+            .then(response => response.json())
+            .then(data => {
+                document.querySelectorAll('.stat-total-books').forEach(el => {
+                    el.textContent = data.total_books;
+                });
+                document.querySelectorAll('.stat-total-members').forEach(el => {
+                    el.textContent = data.total_members;
+                });
+                document.querySelectorAll('.stat-total-borrowed').forEach(el => {
+                    el.textContent = data.total_borrowed;
+                });
+                document.querySelectorAll('.stat-overdue').forEach(el => {
+                    el.textContent = data.overdue_books;
+                });
+            })
+            .catch(error => console.error('Error fetching stats:', error));
+    }, 30000);
+</script>
+{% endblock %}

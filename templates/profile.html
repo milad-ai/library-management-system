@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}پروفایل کاربر{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-person-circle"></i> پروفایل کاربر
+                </h4>
+            </div>
+            
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3 text-center">
+                        <div class="avatar-circle bg-primary text-white display-4 rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 100px; height: 100px;">
+                            {{ user.username[0].upper() }}
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h3>{{ user.username }}</h3>
+                        <p class="text-muted">مدیر سیستم کتابخانه</p>
+                        <p>
+                            <i class="bi bi-calendar-event"></i>
+                            تاریخ امروز: {{ now.strftime('%Y-%m-%d') }}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-key"></i> امنیت حساب
+                                </h5>
+                                <p class="card-text">برای افزایش امنیت حساب خود، رمز عبور را به‌طور منظم تغییر دهید.</p>
+                                <a href="{{ url_for('change_password') }}" class="btn btn-warning">
+                                    تغییر رمز عبور
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-info-circle"></i> اطلاعات حساب
+                                </h5>
+                                <ul class="list-unstyled">
+                                    <li><strong>نام کاربری:</strong> {{ user.username }}</li>
+                                    <li><strong>نقش:</strong> مدیر سیستم</li>
+                                    <li><strong>وضعیت:</strong> فعال</li>
+                                    <li><strong>آخرین ورود:</strong> امروز</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-activity"></i> فعالیت‌های اخیر
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">ورود به سیستم</h6>
+                                    <small class="text-muted">اکنون</small>
+                                </div>
+                                <p class="mb-1 small">ورود موفقیت‌آمیز به سیستم مدیریت کتابخانه</p>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">مشاهده داشبورد</h6>
+                                    <small class="text-muted">۲ دقیقه پیش</small>
+                                </div>
+                                <p class="mb-1 small">بازدید از صفحه اصلی مدیریت</p>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">مشاهده لیست کتاب‌ها</h6>
+                                    <small class="text-muted">۵ دقیقه پیش</small>
+                                </div>
+                                <p class="mb-1 small">بازدید از صفحه مدیریت کتاب‌ها</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

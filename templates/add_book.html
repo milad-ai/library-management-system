@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}افزودن کتاب جدید{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-plus-circle"></i> افزودن کتاب جدید
+                </h4>
+            </div>
+            
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_book') }}">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="title" class="form-label">عنوان کتاب *</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   placeholder="عنوان کامل کتاب" required>
+                            <div class="form-text">حداقل ۲ حرف وارد کنید</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="isbn" class="form-label">شابک (ISBN)</label>
+                            <input type="text" class="form-control" id="isbn" name="isbn" 
+                                   placeholder="978-3-16-148410-0">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="author" class="form-label">نویسنده *</label>
+                            <input type="text" class="form-control" id="author" name="author" 
+                                   placeholder="نام نویسنده" required>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="publication_year" class="form-label">سال انتشار</label>
+                            <input type="number" class="form-control" id="publication_year" 
+                                   name="publication_year" min="1000" max="2100" 
+                                   placeholder="1400">
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="total_copies" class="form-label">تعداد نسخه‌ها *</label>
+                            <input type="number" class="form-control" id="total_copies" 
+                                   name="total_copies" value="1" min="1" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">توضیحات (اختیاری)</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="3" placeholder="توضیحات اضافی درباره کتاب"></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        فیلدهای ستاره‌دار (*) الزامی هستند.
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('books') }}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> انصراف
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> ذخیره کتاب
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> نکات مهم
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>عنوان کتاب باید واضح و کامل باشد</li>
+                    <li>نام نویسنده را دقیقاً همانطور که روی جلد کتاب است وارد کنید</li>
+                    <li>شابک (ISBN) برای شناسایی منحصربه‌فرد کتاب استفاده می‌شود</li>
+                    <li>تعداد نسخه‌ها نشان‌دهنده تعداد کل کتاب‌های موجود است</li>
+                    <li>پس از ثبت، کتاب در لیست کتاب‌های قابل امانت ظاهر می‌شود</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

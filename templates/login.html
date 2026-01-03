@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}ورود به سیستم{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-door-open"></i> ورود به سیستم
+                </h4>
+            </div>
+            
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">نام کاربری</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="نام کاربری" required autofocus>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">رمز عبور</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="رمز عبور" required>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> ورود
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i>
+                        برای دسترسی به سیستم از نام کاربری و رمز عبور ادمین استفاده کنید.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
